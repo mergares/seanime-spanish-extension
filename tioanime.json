@@ -2,7 +2,7 @@
   "id": "jimov",
   "name": "Jimov",
   "version": "1.0.0",
-  "manifestURI": "https://raw.githubusercontent.com/your-username/seanime-extensions/main/jimov/manifest.json",
+  "manifestURI": "https://raw.githubusercontent.com/mergares/share/refs/heads/main/tioanime.json?token=GHSAT0AAAAAADIQX3QX34IACOWPDILOCFRO2EPKHUA",
   "language": "typescript",
   "type": "onlinestream-provider",
   "description": "Jimov is an online stream provider for anime with both sub and dub support, powered by Monoschinos implementation.",
