@@ -2,7 +2,7 @@
   "id": "local-animeflv-js-manifest",
   "name": "Local AnimeFLV JS Provider",
   "description": "JavaScript-based onlinestream-provider using local jimov AnimeFLV API.",
-  "manifestURI": "",
+  "manifestURI": "https://raw.githubusercontent.com/mergares/seanime-spanish-extension/refs/heads/main/manifest.json",
   "version": "1.0.0",
   "author": "You",
   "type": "onlinestream-provider",
