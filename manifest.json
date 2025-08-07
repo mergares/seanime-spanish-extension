@@ -1,12 +1,12 @@
 {
   "id": "local-animeflv-provider",
   "name": "Local AnimeFLV Provider",
-  "description": "Stream anime from a locally hosted jimov API using the AnimeFLV provider with search.",
-  "manifestURI": "https://raw.githubusercontent.com/mergares/seanime-spanish-extension/refs/heads/main/manifest.json",
+  "description": "Stream anime via local jimov API (AnimeFLV) with search.",
+  "manifestURI": "",
   "version": "1.0.0",
-  "author": "User",
+  "author": "You",
   "type": "onlinestream-provider",
   "language": "javascript",
   "lang": "en",
-  "payload": "class Provider {\\n  constructor() { this.api = \\\"http://100.91.179.28:3003/anime/flv\\\"; }\\n  getSettings() { return { episodeServers: [\\\"default\\\"], supportsDub: false }; }\\n  async search(opts) { const res = await fetch(`${this.api}/search/${encodeURIComponent(opts.query)}`); if (!res.ok) return []; return await res.json(); }\\n  async findEpisodes(id) { const res = await fetch(`${this.api}/name/${id}`); if (!res.ok) return []; const data = await res.json(); return data.episodes.map(e => ({ id: e.number.toString(), number: e.number, url: e.url, title: e.name })); }\\n  async findEpisodeServer(ep, server) { const res = await fetch(`${this.api}/episode/${ep.number}`); if (!res.ok) throw new Error(res.statusText); const data = await res.json(); const s = data.servers.find(x => x.name === server) || data.servers[0]; return { server: s.name, headers: {}, videoSources: [{ url: s.file_url, type: \\\"m3u8\\\", quality: \\\"1080p\\\", subtitles: [] }] }; }\\n}"
+  "payload": "/// <reference path=\"./online-streaming-provider.d.ts\" />\n\nclass Provider {\n  constructor() {\n    this.baseUrl = \"http://100.91.179.28:3003/anime/flv\";\n  }\n\n  getSettings() {\n    return { episodeServers: [\"default\"], supportsDub: false };\n  }\n\n  async search(opts) {\n    const res = await fetch(`${this.baseUrl}/search/${encodeURIComponent(opts.query)}`);\n    if (!res.ok) return [];\n    const data = await res.json();\n    return [{\n      id: data.slug,\n      title: data.name,\n      url: `${this.baseUrl}/name/${data.slug}`,\n      subOrDub: \"sub\"\n    }];\n  }\n\n  async findEpisodes(id) {\n    const res = await fetch(`${this.baseUrl}/name/${id}`);\n    if (!res.ok) return [];\n    const anime = await res.json();\n    return anime.episodes.map(ep => ({\n      id: id,\n      number: ep.number,\n      url: ep.url,\n      title: ep.name\n    }));\n  }\n\n  async findEpisodeServer(episode, _server) {\n    const res = await fetch(`${this.baseUrl}/episode/${episode.number}`);\n    if (!res.ok) throw new Error(res.statusText);\n    const epInfo = await res.json();\n    const srv = epInfo.servers[0];\n    return {\n      server: srv.name,\n      headers: {},\n      videoSources: [{\n        url: srv.file_url,\n        type: \"hls\",\n        quality: \"auto\",\n        subtitles: []\n      }]\n    };\n  }\n}\n"
 }
