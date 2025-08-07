@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "author": "You",
   "type": "onlinestream-provider",
-  "language": "javascript",
+  "language": "typescript",
   "lang": "en",
   "payload": "/// <reference path=\"./online-streaming-provider.d.ts\" />\n\nclass Provider {\n  constructor() {\n    this.baseUrl = \"http://100.91.179.28:3003/anime/flv\";\n  }\n\n  getSettings() {\n    return { episodeServers: [\"default\"], supportsDub: false };\n  }\n\n  async search(opts) {\n    const res = await fetch(`${this.baseUrl}/search/${encodeURIComponent(opts.query)}`);\n    if (!res.ok) return [];\n    const data = await res.json();\n    return [{\n      id: data.slug,\n      title: data.name,\n      url: `${this.baseUrl}/name/${data.slug}`,\n      subOrDub: \"sub\"\n    }];\n  }\n\n  async findEpisodes(id) {\n    const res = await fetch(`${this.baseUrl}/name/${id}`);\n    if (!res.ok) return [];\n    const anime = await res.json();\n    return anime.episodes.map(ep => ({\n      id: id,\n      number: ep.number,\n      url: ep.url,\n      title: ep.name\n    }));\n  }\n\n  async findEpisodeServer(episode, _server) {\n    const res = await fetch(`${this.baseUrl}/episode/${episode.number}`);\n    if (!res.ok) throw new Error(res.statusText);\n    const epInfo = await res.json();\n    const srv = epInfo.servers[0];\n    return {\n      server: srv.name,\n      headers: {},\n      videoSources: [{\n        url: srv.file_url,\n        type: \"hls\",\n        quality: \"auto\",\n        subtitles: []\n      }]\n    };\n  }\n}\n"
 }
