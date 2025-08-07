@@ -2,7 +2,7 @@
   "id": "jimov-animeflv-provider",
   "name": "Jimov AnimeFLV Provider",
   "description": "Seanime online-streaming provider using local jimov API and AnimeFLV search.",
-  "manifestURI": "",
+  "manifestURI": "https://raw.githubusercontent.com/mergares/seanime-spanish-extension/refs/heads/main/manifest.json",
   "version": "1.0.0",
   "author": "Your Name",
   "type": "onlinestream-provider",
