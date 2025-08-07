@@ -1,12 +1,12 @@
 {
-  "id": "local-animeflv-js-manifest",
-  "name": "Local AnimeFLV JS Provider",
-  "description": "JavaScript-based onlinestream-provider using a local jimov AnimeFLV API.",
-  "manifestURI": "https://raw.githubusercontent.com/mergares/seanime-spanish-extension/refs/heads/main/manifest.json",
+  "id": "jimov-animeflv-provider",
+  "name": "Jimov AnimeFLV Provider",
+  "description": "Seanime online-streaming provider using local jimov API and AnimeFLV search.",
+  "manifestURI": "",
   "version": "1.0.0",
-  "author": "You",
+  "author": "Your Name",
   "type": "onlinestream-provider",
-  "language": "javascript",
+  "language": "typescript",
   "lang": "en",
-  "payload":"class Provider{constructor(){this.baseUrl=\"http://100.91.179.28:3003/anime/flv\";}getSettings(){return{episodeServers:[\"default\"],supportsDub:false};}async search(opts){const res=await fetch(this.baseUrl+\"/search/\"+encodeURIComponent(opts.query));if(!res.ok)return[];const d=await res.json();return[{id:d.slug,title:d.name,url:this.baseUrl+\"/name/\"+d.slug,subOrDub:\"sub\"}];}async findEpisodes(id){const res=await fetch(this.baseUrl+\"/name/\"+id);if(!res.ok)return[];const a=await res.json();return a.episodes.map(e=>({id:id,number:e.number,url:e.url,title:e.name}));}async findEpisodeServer(ep,sv){const res=await fetch(this.baseUrl+\"/episode/\"+ep.number);if(!res.ok)throw new Error(res.statusText);const j=await res.json();const s=j.servers[0];return{server:s.name,headers:{},videoSources:[{url:s.file_url,type:\"hls\",quality:\"auto\",subtitles:[]}]};} }new Provider();"
+  "payload": "class Provider {\n  private baseUrl = \"http://100.91.179.28:3003/anime/flv\";\n  getSettings(): Settings { return { episodeServers: [\"default\"], supportsDub: false }; }\n  async search(opts: SearchOptions): Promise<SearchResult[]> {\n    const res = await fetch(`${this.baseUrl}/search/${encodeURIComponent(opts.query)}`);\n    if (!res.ok) return [];\n    const data = await res.json();\n    return data.results.map(r => ({ id: r.url.split('/').pop() || '', title: r.name, url: r.url, subOrDub: 'sub' }));\n  }\n  async findEpisodes(id: string): Promise<Episode[]> {\n    const res = await fetch(`${this.baseUrl}/name/${id}`);\n    if (!res.ok) return [];\n    const anime = await res.json();\n    return anime.episodes.map(ep => ({ id, number: ep.number, url: ep.url, title: ep.name }));\n  }\n  async findEpisodeServer(\n    episode: EpisodeDetails,\n    server: string\n  ): Promise<EpisodeServer> {\n    const res = await fetch(`${this.baseUrl}/episode/${episode.number}`);\n    if (!res.ok) throw new Error(res.statusText);\n    const data = await res.json();\n    const srv = data.servers[0];\n    return {\n      server: srv.name,\n      headers: {},\n      videoSources: [{ url: srv.file_url, type: 'hls', quality: 'auto', subtitles: [] }]\n    };\n  }\n}\n// Seanime extension will instantiate this provider\nnew Provider();"
 }
